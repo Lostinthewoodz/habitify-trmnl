@@ -1,0 +1,137 @@
+<!-- Paste the ENTIRE contents of this file into the TRMNL markup editor. -->
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  /* No custom font-family — use TRMNL's Inter throughout.
+     All grays are #555 or darker so they're visible on e-ink. */
+  .hw{padding:16px 20px 10px;background:#f5f3ee;color:#111;}
+
+  /* header */
+  .hdr{display:flex;align-items:flex-end;justify-content:space-between;}
+  .hdr-l{display:flex;align-items:baseline;gap:10px;}
+  .h-title{font-size:44px;font-weight:bold;line-height:1;}
+  .h-sub{font-style:italic;color:#555;font-size:17px;}
+  .h-date{font-style:italic;font-size:28px;color:#111;}
+  .drange{font-size:9px;letter-spacing:2px;color:#555;text-align:right;text-transform:uppercase;margin:2px 0 4px;}
+  .hline{border:none;border-top:1.5px solid #111;}
+
+  /* rows */
+  .g-row{display:flex;align-items:center;}
+  .g-row+.g-row{border-top:1px solid #bbb;}
+
+  /* name column */
+  .c-name{padding-right:6px;font-size:15px;}
+  .hdr-row .c-name,.bar-row .c-name{
+    font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+    color:#555;align-self:flex-end;padding-bottom:3px;
+  }
+
+  /* day columns */
+  .c-days{display:flex;flex:1;}
+  .c-day{flex:1;display:flex;justify-content:center;align-items:center;padding:8px 0;}
+  .hdr-row .c-day{align-items:flex-end;padding-bottom:4px;}
+  .bar-row .c-day{align-items:flex-end;padding-bottom:0;}
+
+  /* rotated day label */
+  .dh{display:inline-block;transform:rotate(-45deg);transform-origin:center bottom;
+      white-space:nowrap;font-size:9px;color:#444;line-height:1.2;}
+
+  /* squares */
+  .sq{display:inline-block;border:1.5px solid #333;}
+  .sq.on{background:#111;border-color:#111;}
+
+  /* rate + streak columns */
+  .c-rate{text-align:right;padding:0 4px;}
+  .c-sk{text-align:right;padding-left:4px;}
+  .hdr-row .c-rate,.hdr-row .c-sk{
+    font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
+    color:#555;align-self:flex-end;padding-bottom:3px;
+  }
+  .rate-n{font-size:20px;font-weight:bold;}
+  .rate-p{font-size:10px;font-weight:normal;vertical-align:super;}
+  .sk-l{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
+  .sk-v{font-size:10px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;}
+
+  /* bar chart */
+  .bar-i{background:#111;display:block;width:10px;}
+  .bar-row .c-rate{align-self:flex-end;}
+  .tot-n{font-size:24px;font-weight:bold;line-height:1;white-space:nowrap;}
+  .tot-s{font-size:11px;color:#555;}
+
+  /* footer */
+  .ftr{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+  .ftr-l{font-size:11px;color:#444;}
+  .ftr-r{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
+</style>
+
+<div class="hw">
+
+  <div class="hdr">
+    <div class="hdr-l">
+      <span class="h-title">Habits</span>
+      <span class="h-sub">keep it up, {{ username }}!</span>
+    </div>
+    <span class="h-date">{{ today_display }}</span>
+  </div>
+  <div class="drange">{{ date_start }} &mdash; {{ date_end }} &middot; {{ year }}</div>
+  <hr class="hline">
+
+  <!-- column headers -->
+  <div class="g-row hdr-row">
+    <div class="c-name w--44 w--min-44">Habit</div>
+    <div class="c-days">
+      {% for col in col_labels %}
+      <div class="c-day h--14">
+        <span class="dh">{{ col.day }}<br>{{ col.num }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20">Rate</div>
+    <div class="c-sk w--16 w--min-16">Streak</div>
+  </div>
+
+  <!-- habit rows -->
+  {% for habit in habits %}
+  <div class="g-row">
+    <div class="c-name w--44 w--min-44">{{ habit.name }}</div>
+    <div class="c-days">
+      {% for d in habit.days %}
+      <div class="c-day">
+        <span class="sq w--5 h--5{% if d == 1 %} on{% endif %}"></span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20">
+      <span class="rate-n">{{ habit.rate }}<sup class="rate-p">%</sup></span>
+    </div>
+    <div class="c-sk w--16 w--min-16">
+      <div class="sk-l">Streak</div>
+      <div class="sk-v">{{ habit.streak }} days</div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <hr class="hline" style="margin-top:5px;">
+
+  <!-- daily completion bar chart -->
+  <div class="g-row bar-row">
+    <div class="c-name w--44 w--min-44">Daily Completion</div>
+    <div class="c-days h--10">
+      {% for dt in daily_totals %}
+      <div class="c-day">
+        <div class="bar-i" style="height:{{ dt.height_px }}px;"></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20">
+      <div class="tot-n">{{ total_completed }}<span class="tot-s"> / {{ total_possible }}</span></div>
+    </div>
+    <div class="c-sk w--16 w--min-16"></div>
+  </div>
+
+  <div class="ftr">
+    <div class="ftr-l"><strong>Habitify</strong> &mdash; <em>field notebook</em></div>
+    <div class="ftr-r">Last 14 days &mdash;&mdash; V 1.0</div>
+  </div>
+
+</div>
