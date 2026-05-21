@@ -1,9 +1,18 @@
 import os
 import requests
-from datetime import date, timedelta
+from datetime import timedelta
+from datetime import datetime
+import zoneinfo
 from dotenv import load_dotenv
 
 load_dotenv()
+
+TZ = zoneinfo.ZoneInfo("America/Los_Angeles")
+
+
+def today():
+    return datetime.now(TZ).date()
+
 
 HABITIFY_API_KEY = os.environ["HABITIFY_API_KEY"]
 TRMNL_PLUGIN_UUID = os.environ["TRMNL_PLUGIN_UUID"]
@@ -28,18 +37,18 @@ def get_daily_progress(habit_id):
 
 
 def build_grid(daily_progress):
-    today = date.today()
-    start = today - timedelta(days=DAYS - 1)
+    now = today()
+    start = now - timedelta(days=DAYS - 1)
     by_date = {e["date"]: e["status"] for e in daily_progress}
     return [1 if by_date.get((start + timedelta(days=i)).isoformat()) == "completed" else 0 for i in range(DAYS)]
 
 
 def compute_streak(daily_progress):
-    today = date.today()
+    now = today()
     by_date = {e["date"]: e["status"] for e in daily_progress}
     streak = 0
     for i in range(365):
-        d = (today - timedelta(days=i)).isoformat()
+        d = (now - timedelta(days=i)).isoformat()
         if by_date.get(d) == "completed":
             streak += 1
         else:
@@ -48,8 +57,8 @@ def compute_streak(daily_progress):
 
 
 def build_col_labels():
-    today = date.today()
-    start = today - timedelta(days=DAYS - 1)
+    now = today()
+    start = now - timedelta(days=DAYS - 1)
     day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     return [
         {"day": day_names[(start + timedelta(days=i)).weekday()], "num": (start + timedelta(days=i)).day}
@@ -59,8 +68,8 @@ def build_col_labels():
 
 def main():
     habits = get_active_habits()
-    today = date.today()
-    start = today - timedelta(days=DAYS - 1)
+    now = today()
+    start = now - timedelta(days=DAYS - 1)
 
     payload_habits = []
     for habit in habits:
@@ -90,9 +99,9 @@ def main():
         "total_completed": total_completed,
         "total_possible": total_possible,
         "date_start": start.strftime("%b %-d").upper(),
-        "date_end": today.strftime("%b %-d").upper(),
-        "year": today.year,
-        "today_display": today.strftime("%B %-d"),
+        "date_end": now.strftime("%b %-d").upper(),
+        "year": now.year,
+        "today_display": now.strftime("%B %-d"),
         "username": USERNAME,
     }
 
