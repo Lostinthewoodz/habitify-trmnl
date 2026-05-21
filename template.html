@@ -20,10 +20,10 @@
   .g-row+.g-row{border-top:1px solid #bbb;}
 
   /* name column */
-  .c-name{padding-right:6px;font-size:16.5px;font-weight:bold;}
+  .c-name{padding-right:6px;font-size:28px;font-weight:bold;}
   .hdr-row .c-name,.bar-row .c-name{
     font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
-    color:#555;align-self:flex-end;padding-bottom:3px;
+    color:#555;align-self:flex-end;padding-bottom:3px;font-weight:normal;
   }
 
   /* day columns */
@@ -40,23 +40,20 @@
   .sq{display:inline-block;border:1.5px solid #333;}
   .sq.on{background:#111;border-color:#111;}
 
-  /* rate + streak columns */
+  /* rate column */
   .c-rate{text-align:right;padding:0 4px;}
-  .c-sk{text-align:right;padding-left:4px;}
-  .hdr-row .c-rate,.hdr-row .c-sk{
+  .hdr-row .c-rate{
     font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
     color:#555;align-self:flex-end;padding-bottom:3px;
   }
-  .rate-n{font-size:20px;font-weight:bold;}
-  .rate-p{font-size:10px;font-weight:normal;vertical-align:super;}
-  .sk-l{font-size:7px;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
-  .sk-v{font-size:10px;font-weight:bold;letter-spacing:.5px;text-transform:uppercase;}
+  .rate-n{font-size:28px;font-weight:bold;}
+  .rate-p{font-size:13px;font-weight:normal;vertical-align:super;}
 
   /* bar chart */
   .bar-i{background:#111;display:block;width:10px;}
   .bar-row .c-rate{align-self:flex-end;}
-  .tot-n{font-size:24px;font-weight:bold;line-height:1;white-space:nowrap;}
-  .tot-s{font-size:11px;color:#555;}
+  .tot-n{font-size:28px;font-weight:bold;line-height:1;white-space:nowrap;}
+  .tot-s{font-size:13px;color:#555;}
 
   /* footer */
   .ftr{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
@@ -87,7 +84,6 @@
       {% endfor %}
     </div>
     <div class="c-rate w--20 w--min-20">Rate</div>
-    <div class="c-sk w--16 w--min-16">Streak</div>
   </div>
 
   <!-- habit rows -->
@@ -103,10 +99,6 @@
     </div>
     <div class="c-rate w--20 w--min-20">
       <span class="rate-n">{{ habit.rate }}<sup class="rate-p">%</sup></span>
-    </div>
-    <div class="c-sk w--16 w--min-16">
-      <div class="sk-l">Streak</div>
-      <div class="sk-v">{{ habit.streak }} days</div>
     </div>
   </div>
   {% endfor %}
@@ -126,7 +118,6 @@
     <div class="c-rate w--20 w--min-20">
       <div class="tot-n">{{ total_completed }}<span class="tot-s"> / {{ total_possible }}</span></div>
     </div>
-    <div class="c-sk w--16 w--min-16"></div>
   </div>
 
   <div class="ftr">
