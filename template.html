@@ -11,7 +11,7 @@
   .hdr-l{display:flex;align-items:baseline;gap:10px;}
   .h-title{font-size:28px;font-weight:bold;line-height:1;}
   .h-sub{font-style:italic;color:#555;font-size:17px;}
-  .h-date{font-style:italic;font-size:28px;color:#111;}
+  .h-date{font-style:italic;font-size:28px;color:#111;font-weight:bold;}
   .hline{border:none;border-top:1.5px solid #111;}
 
   /* rows */
@@ -38,7 +38,6 @@
 
   /* squares */
   .sq{display:inline-block;border:1.5px solid #333;}
-  .sq.on{background:#111;border-color:#111;}
 
   /* rate column */
   .c-rate{text-align:right;padding:0 4px;}
@@ -92,7 +91,7 @@
     <div class="c-days">
       {% for d in habit.days %}
       <div class="c-day">
-        <span class="sq w--5 h--5{% if d == 1 %} on{% endif %}"></span>
+        <span class="sq w--5 h--5" style="background:linear-gradient(to top,#111 {{ d.fill }}%,transparent {{ d.fill }}%);{% if d.fill == 100 %}border-color:#111;{% endif %}"></span>
       </div>
       {% endfor %}
     </div>
