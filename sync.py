@@ -4,6 +4,7 @@ from datetime import timedelta
 from datetime import datetime
 import zoneinfo
 from dotenv import load_dotenv
+from jinja2 import Environment, FileSystemLoader
 
 load_dotenv()
 
@@ -120,6 +121,13 @@ def main():
         print(f"Error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     print(f"Pushed to TRMNL: {resp.status_code}")
+
+    os.makedirs("public", exist_ok=True)
+    env = Environment(loader=FileSystemLoader("."))
+    html = env.get_template("template_jinja.html").render(**merge_variables)
+    with open("public/index.html", "w") as f:
+        f.write(html)
+    print("Rendered public/index.html")
 
 
 if __name__ == "__main__":

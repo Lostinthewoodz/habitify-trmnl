@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habits — {{ username }}</title>
+  <style>
+    body{margin:0;padding:20px;background:#222;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:Inter,sans-serif;}
+
+    /* TRMNL utility classes */
+    .w--44,.w--min-44{width:150px;min-width:150px;flex-shrink:0;}
+    .w--20,.w--min-20{width:70px;min-width:70px;flex-shrink:0;}
+    .w--5{width:14px;}.h--5{height:14px;}
+    .h--14{height:14px;}.h--10{height:40px;}
+
+    *{box-sizing:border-box;margin:0;padding:0;}
+    .hw{padding:10px 20px 8px;background:#f5f3ee;color:#111;width:800px;}
+
+    .hdr{display:flex;align-items:flex-end;justify-content:space-between;}
+    .hdr-l{display:flex;align-items:baseline;gap:10px;}
+    .h-title{font-size:28px;font-weight:bold;line-height:1;}
+    .h-sub{font-style:italic;color:#555;font-size:17px;}
+    .h-date{font-style:italic;font-size:28px;color:#111;font-weight:bold;}
+    .hline{border:none;border-top:1.5px solid #111;}
+
+    .g-row{display:flex;align-items:center;}
+    .g-row+.g-row{border-top:1.5px solid #555;}
+    .g-row:not(.hdr-row):not(.bar-row):not(.lbl-row){min-height:62px;}
+    .lbl-row .c-day{padding:2px 0;}
+    .lbl-row{border-bottom:1.5px solid #111;}
+    .day-lbl{font-size:17px;font-weight:bold;color:#555;}
+    .lbl-row+.g-row{border-top:none;}
+
+    .c-name{padding-right:6px;font-size:28px;font-weight:bold;}
+    .hdr-row .c-name,.bar-row .c-name{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;align-self:flex-end;padding-bottom:3px;font-weight:normal;}
+
+    .c-days{display:flex;flex:1;}
+    .c-day{flex:1;display:flex;justify-content:center;align-items:center;padding:8px 0;}
+    .bar-row .c-day{align-items:flex-end;padding-bottom:0;}
+
+    .sq{display:inline-block;border:1.5px solid #333;}
+
+    .c-rate{text-align:right;padding:0 4px;}
+    .rate-n{font-size:28px;font-weight:bold;}
+    .rate-p{font-size:13px;font-weight:normal;vertical-align:super;}
+
+    .bar-i{background:#111;display:block;width:10px;}
+    .bar-row .c-rate{align-self:flex-end;}
+    .tot-n{font-size:28px;font-weight:bold;line-height:1;white-space:nowrap;}
+    .tot-s{font-size:13px;color:#555;}
+
+    .ftr{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+    .ftr-l{font-size:11px;color:#444;}
+    .ftr-r{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
+  </style>
+</head>
+<body>
+<div class="hw">
+
+  <div class="hdr">
+    <div class="hdr-l">
+      <span class="h-title">Habits</span>
+      <span class="h-sub">keep it up, {{ username }}!</span>
+    </div>
+    <span class="h-date">{{ today_display }}</span>
+  </div>
+  <hr class="hline">
+
+  <!-- day letter labels -->
+  <div class="g-row lbl-row">
+    <div class="c-name w--44 w--min-44"></div>
+    <div class="c-days">
+      {% for letter in day_letters %}
+      <div class="c-day" {% if loop.index0 in sunday_cols %}style="border-left:3px dashed #555;"{% endif %}>
+        <span class="day-lbl">{{ letter }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20"></div>
+  </div>
+
+  <!-- habit rows -->
+  {% for habit in habits %}
+  <div class="g-row">
+    <div class="c-name w--44 w--min-44">{{ habit.name }}</div>
+    <div class="c-days">
+      {% for d in habit.days %}
+      <div class="c-day" {% if loop.index0 in sunday_cols %}style="border-left:3px dashed #555;"{% endif %}>
+        <span class="sq w--5 h--5" style="background:linear-gradient(to top,#111 {{ d.fill }}%,transparent {{ d.fill }}%);{% if d.fill == 100 %}border-color:#111;{% endif %}"></span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20">
+      <span class="rate-n">{{ habit.rate }}<sup class="rate-p">%</sup></span>
+    </div>
+  </div>
+  {% endfor %}
+
+  <hr class="hline" style="margin-top:5px;">
+
+  <!-- daily completion bar chart -->
+  <div class="g-row bar-row">
+    <div class="c-name w--44 w--min-44">Daily Completion</div>
+    <div class="c-days h--10">
+      {% for dt in daily_totals %}
+      <div class="c-day" {% if loop.index0 in sunday_cols %}style="border-left:3px dashed #555;"{% endif %}>
+        <div class="bar-i" style="height:{{ dt.height_px }}px;"></div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="c-rate w--20 w--min-20">
+      <div class="tot-n">{{ total_completed }}<span class="tot-s"> / {{ total_possible }}</span></div>
+    </div>
+  </div>
+
+  <div class="ftr">
+    <div class="ftr-l"><strong>Habitify</strong> &mdash; <em>field notebook</em></div>
+    <div class="ftr-r">Last 14 days &mdash;&mdash; V 1.0</div>
+  </div>
+
+</div>
+</body>
+</html>
