@@ -64,20 +64,17 @@ def compute_streak(daily_progress):
     return streak
 
 
-def build_col_labels():
-    now = today()
-    start = now - timedelta(days=DAYS - 1)
-    day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    return [
-        {"day": day_names[(start + timedelta(days=i)).weekday()], "num": (start + timedelta(days=i)).day}
-        for i in range(DAYS)
-    ]
-
 
 def main():
     habits = get_active_habits()
     now = today()
     start = now - timedelta(days=DAYS - 1)
+
+    # Indices (0-based) of columns that fall on Sunday — used by template for week dividers
+    sunday_cols = [i for i in range(DAYS) if (start + timedelta(days=i)).weekday() == 6]
+
+    _abbrevs = ["M", "T", "W", "Th", "F", "S", "S"]
+    day_letters = [_abbrevs[(start + timedelta(days=i)).weekday()] for i in range(DAYS)]
 
     grids = []
     payload_habits = []
@@ -106,7 +103,8 @@ def main():
 
     merge_variables = {
         "habits": payload_habits,
-        "col_labels": build_col_labels(),
+        "sunday_cols": sunday_cols,
+        "day_letters": day_letters,
         "daily_totals": daily_totals,
         "total_completed": total_completed,
         "total_possible": total_possible,
@@ -118,6 +116,8 @@ def main():
     }
 
     resp = requests.post(TRMNL_WEBHOOK_URL, json={"merge_variables": merge_variables})
+    if not resp.ok:
+        print(f"Error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     print(f"Pushed to TRMNL: {resp.status_code}")
 

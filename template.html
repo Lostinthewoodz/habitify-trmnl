@@ -17,7 +17,11 @@
   /* rows */
   .g-row{display:flex;align-items:center;}
   .g-row+.g-row{border-top:1.5px solid #555;}
-  .g-row:not(.hdr-row):not(.bar-row){min-height:62px;}
+  .g-row:not(.hdr-row):not(.bar-row):not(.lbl-row){min-height:62px;}
+  .lbl-row .c-day{padding:2px 0;}
+  .lbl-row{border-bottom:1.5px solid #111;}
+  .day-lbl{font-size:17px;font-weight:bold;color:#555;}
+  .lbl-row+.g-row{border-top:none;}
 
   /* name column */
   .c-name{padding-right:6px;font-size:28px;font-weight:bold;}
@@ -71,17 +75,17 @@
   </div>
   <hr class="hline">
 
-  <!-- column headers -->
-  <div class="g-row hdr-row">
-    <div class="c-name w--44 w--min-44">Habit</div>
+  <!-- day letter labels -->
+  <div class="g-row lbl-row">
+    <div class="c-name w--44 w--min-44"></div>
     <div class="c-days">
-      {% for col in col_labels %}
-      <div class="c-day h--14">
-        <span class="dh">{{ col.day }}<br>{{ col.num }}</span>
+      {% for letter in day_letters %}
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
+        <span class="day-lbl">{{ letter }}</span>
       </div>
       {% endfor %}
     </div>
-    <div class="c-rate w--20 w--min-20">Rate</div>
+    <div class="c-rate w--20 w--min-20"></div>
   </div>
 
   <!-- habit rows -->
@@ -90,7 +94,7 @@
     <div class="c-name w--44 w--min-44">{{ habit.name }}</div>
     <div class="c-days">
       {% for d in habit.days %}
-      <div class="c-day">
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
         <span class="sq w--5 h--5" style="background:linear-gradient(to top,#111 {{ d.fill }}%,transparent {{ d.fill }}%);{% if d.fill == 100 %}border-color:#111;{% endif %}"></span>
       </div>
       {% endfor %}
@@ -108,7 +112,7 @@
     <div class="c-name w--44 w--min-44">Daily Completion</div>
     <div class="c-days h--10">
       {% for dt in daily_totals %}
-      <div class="c-day">
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
         <div class="bar-i" style="height:{{ dt.height_px }}px;"></div>
       </div>
       {% endfor %}
