@@ -4,30 +4,30 @@
 
   /* No custom font-family — use TRMNL's Inter throughout.
      All grays are #555 or darker so they're visible on e-ink. */
-  .hw{padding:10px 20px 8px;background:#f5f3ee;color:#111;}
+  .hw{padding:10px 20px 8px;}
 
   /* header */
   .hdr{display:flex;align-items:flex-end;justify-content:space-between;}
   .hdr-l{display:flex;align-items:baseline;gap:10px;}
   .h-title{font-size:28px;font-weight:bold;line-height:1;}
-  .h-sub{font-style:italic;color:#555;font-size:17px;}
-  .h-date{font-style:italic;font-size:28px;color:#111;font-weight:bold;}
-  .hline{border:none;border-top:1.5px solid #111;}
+  .h-sub{font-style:italic;color:var(--gray-30);font-size:17px;}
+  .h-date{font-style:italic;font-size:28px;font-weight:bold;}
+  .hline{border:none;border-top:1.5px solid var(--black);}
 
   /* rows */
   .g-row{display:flex;align-items:center;}
-  .g-row+.g-row{border-top:1.5px solid #555;}
+  .g-row+.g-row{border-top:1.5px solid var(--gray-30);}
   .g-row:not(.hdr-row):not(.bar-row):not(.lbl-row){min-height:62px;}
   .lbl-row .c-day{padding:2px 0;}
-  .lbl-row{border-bottom:1.5px solid #111;}
-  .day-lbl{font-size:17px;font-weight:bold;color:#555;}
+  .lbl-row{border-bottom:1.5px solid var(--black);}
+  .day-lbl{font-size:17px;font-weight:bold;color:var(--gray-30);}
   .lbl-row+.g-row{border-top:none;}
 
   /* name column */
   .c-name{padding-right:6px;font-size:28px;font-weight:bold;}
   .hdr-row .c-name,.bar-row .c-name{
     font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
-    color:#555;align-self:flex-end;padding-bottom:3px;font-weight:normal;
+    color:var(--gray-30);align-self:flex-end;padding-bottom:3px;font-weight:normal;
   }
 
   /* day columns */
@@ -36,32 +36,28 @@
   .hdr-row .c-day{align-items:flex-end;padding-bottom:4px;}
   .bar-row .c-day{align-items:flex-end;padding-bottom:0;}
 
-  /* rotated day label */
-  .dh{display:inline-block;transform:rotate(-45deg);transform-origin:center bottom;
-      white-space:nowrap;font-size:9px;color:#444;line-height:1.2;}
-
   /* squares */
-  .sq{display:inline-block;border:1.5px solid #333;}
+  .sq{display:inline-block;border:1.5px solid var(--gray-20);}
 
   /* rate column */
   .c-rate{text-align:right;padding:0 4px;}
   .hdr-row .c-rate{
     font-size:8px;letter-spacing:1.5px;text-transform:uppercase;
-    color:#555;align-self:flex-end;padding-bottom:3px;
+    color:var(--gray-30);align-self:flex-end;padding-bottom:3px;
   }
   .rate-n{font-size:28px;font-weight:bold;}
   .rate-p{font-size:13px;font-weight:normal;vertical-align:super;}
 
   /* bar chart */
-  .bar-i{background:#111;display:block;width:10px;}
+  .bar-i{background:var(--black);display:block;width:10px;}
   .bar-row .c-rate{align-self:flex-end;}
   .tot-n{font-size:28px;font-weight:bold;line-height:1;white-space:nowrap;}
-  .tot-s{font-size:13px;color:#555;}
+  .tot-s{font-size:13px;color:var(--gray-30);}
 
   /* footer */
   .ftr{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
-  .ftr-l{font-size:11px;color:#444;}
-  .ftr-r{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:#555;}
+  .ftr-l{font-size:11px;color:var(--gray-25);}
+  .ftr-r{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-30);}
 </style>
 
 <div class="hw">
@@ -80,7 +76,7 @@
     <div class="c-name w--44 w--min-44"></div>
     <div class="c-days">
       {% for letter in day_letters %}
-      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed var(--gray-30);"{% endif %}>
         <span class="day-lbl">{{ letter }}</span>
       </div>
       {% endfor %}
@@ -94,8 +90,8 @@
     <div class="c-name w--44 w--min-44">{{ habit.name }}</div>
     <div class="c-days">
       {% for d in habit.days %}
-      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
-        <span class="sq w--5 h--5" style="{% if d.fill == 100 %}background:#111;border-color:#111;{% elsif d.fill > 0 %}background:linear-gradient(to top,#999 {{ d.fill }}%,transparent {{ d.fill }}%);{% endif %}"></span>
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed var(--gray-30);"{% endif %}>
+        <span class="sq w--5 h--5" style="{% if d.fill == 100 %}background:var(--black);border-color:var(--black);{% elsif d.fill > 0 %}background:linear-gradient(to top,var(--gray-50) {{ d.fill }}%,transparent {{ d.fill }}%);{% endif %}"></span>
       </div>
       {% endfor %}
     </div>
@@ -112,7 +108,7 @@
     <div class="c-name w--44 w--min-44">Daily Completion</div>
     <div class="c-days h--10">
       {% for dt in daily_totals %}
-      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
+      <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed var(--gray-30);"{% endif %}>
         <div class="bar-i" style="height:{{ dt.height_px }}px;"></div>
       </div>
       {% endfor %}
