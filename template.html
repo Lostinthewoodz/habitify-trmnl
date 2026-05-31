@@ -95,7 +95,7 @@
     <div class="c-days">
       {% for d in habit.days %}
       <div class="c-day" {% if sunday_cols contains forloop.index0 %}style="border-left:3px dashed #555;"{% endif %}>
-        <span class="sq w--5 h--5" style="background:linear-gradient(to top,#111 {{ d.fill }}%,transparent {{ d.fill }}%);{% if d.fill == 100 %}border-color:#111;{% endif %}"></span>
+        <span class="sq w--5 h--5" style="{% if d.fill == 100 %}background:#111;border-color:#111;{% elsif d.fill > 0 %}background:linear-gradient(to top,#999 {{ d.fill }}%,transparent {{ d.fill }}%);{% endif %}"></span>
       </div>
       {% endfor %}
     </div>
