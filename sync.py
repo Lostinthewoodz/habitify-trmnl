@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from datetime import timedelta
@@ -79,6 +80,7 @@ def main():
 
     grids = []
     payload_habits = []
+    habit_histories = []
     for habit in habits:
         daily_progress = get_daily_progress(habit["id"])
         active_goals = [g for g in habit.get("goals", []) if g.get("isActive")]
@@ -92,6 +94,18 @@ def main():
             "rate": round(sum(grid) / DAYS * 100),
         })
 
+        # Full history for web client-side rendering
+        fills = {}
+        for e in daily_progress:
+            status = e.get("status", "")
+            if status == "completed":
+                ratio = 1.0
+            else:
+                total_log = e.get("totalLog") or 0
+                ratio = min(float(total_log) / float(goal_value), 1.0) if goal_value > 0 and total_log > 0 else 0.0
+            fills[e["date"]] = round(ratio * 100)
+        habit_histories.append({"name": habit["name"], "fills": fills})
+
     num_habits = len(payload_habits)
     daily_totals = []
     for i in range(DAYS):
@@ -102,7 +116,8 @@ def main():
     total_completed = sum(1 for g in grids for r in g if r >= 1.0)
     total_possible = num_habits * DAYS
 
-    merge_variables = {
+    # Variables for TRMNL webhook (14-day view only)
+    push_variables = {
         "habits": payload_habits,
         "sunday_cols": sunday_cols,
         "day_letters": day_letters,
@@ -116,15 +131,19 @@ def main():
         "username": USERNAME,
     }
 
-    resp = requests.post(TRMNL_WEBHOOK_URL, json={"merge_variables": merge_variables})
+    resp = requests.post(TRMNL_WEBHOOK_URL, json={"merge_variables": push_variables})
     if not resp.ok:
         print(f"Error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     print(f"Pushed to TRMNL: {resp.status_code}")
 
+    # Variables for web template (adds full history JSON for client-side date range picker)
+    habit_history_json = json.dumps({"habits": habit_histories, "today": now.isoformat()})
+    web_variables = {**push_variables, "habit_history_json": habit_history_json}
+
     os.makedirs("public", exist_ok=True)
     env = Environment(loader=FileSystemLoader("."))
-    html = env.get_template("template_jinja.html").render(**merge_variables)
+    html = env.get_template("template_jinja.html").render(**web_variables)
     with open("public/index.html", "w") as f:
         f.write(html)
     print("Rendered public/index.html")
