@@ -269,7 +269,16 @@ function updateMeta(startStr, endStr) {
 
 // --- Init ---
 const today = DATA.today;
-const defaultStart = addDays(today, -13);
+
+// Default to the most recent complete Sun–Sat week
+const todayDate = parseDate(today);
+const daysToLastSat = (todayDate.getDay() + 1) % 7; // 0 if today is Sat, 1 if Sun, …
+const lastSatDate = new Date(todayDate);
+lastSatDate.setDate(lastSatDate.getDate() - daysToLastSat);
+const prevSunDate = new Date(lastSatDate);
+prevSunDate.setDate(prevSunDate.getDate() - 6);
+const defaultEnd = isoDate(lastSatDate);
+const defaultStart = isoDate(prevSunDate);
 
 // Find earliest available date across all habits
 let minDate = today;
@@ -285,9 +294,10 @@ startEl.max = today;
 endEl.min = minDate;
 endEl.max = today;
 startEl.value = defaultStart >= minDate ? defaultStart : minDate;
-endEl.value = today;
+endEl.value = defaultEnd;
 
-// Update header date to show day of week (grid keeps its Jinja2-rendered content)
+// Render the grid and header for the default Sun–Sat range
+renderGrid(startEl.value, endEl.value);
 updateMeta(startEl.value, endEl.value);
 
 // Re-render grid + update meta only when user picks a custom range
