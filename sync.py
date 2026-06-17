@@ -111,7 +111,7 @@ def main():
     for i in range(DAYS):
         ratio_sum = sum(g[i] for g in grids)
         height_px = round(ratio_sum / num_habits * BAR_MAX_PX) if num_habits else 0
-        daily_totals.append({"count": ratio_sum, "height_px": max(height_px, 2)})
+        daily_totals.append({"height_px": max(height_px, 2)})
 
     total_completed = sum(1 for g in grids for r in g if r >= 1.0)
     total_possible = num_habits * DAYS
